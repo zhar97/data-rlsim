@@ -1,0 +1,66 @@
+default_stages: [push, commit]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: ''
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+        exclude_types: [text]
+      - id: trailing-whitespace
+  - repo: https://github.com/pycqa/isort
+    rev: ''
+    hooks:
+      - id: isort
+        name: isort (python)
+        args: [-l=79, --profile=black]
+  - repo: https://github.com/psf/black
+    rev: ''
+    hooks:
+      - id: black
+        args: [--config=pyproject.toml, --line-length=79]
+  - repo: https://github.com/executablebooks/mdformat
+    rev: ''
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-black
+  - repo: https://github.com/pycqa/flake8
+    rev: ''
+    hooks:
+      - id: flake8
+        additional_dependencies: [
+          flake8-blind-except,
+          flake8-docstrings,
+          flake8-bugbear,
+          flake8-comprehensions,
+          flake8-implicit-str-concat,
+          pydocstyle>=5.0.0
+        ]
+        args: [
+          --max-line-length=79,
+          '--ignore=B006,B008,D100,D101,D102,D103,D104,D200,D205,D209,D400,E202,E203,E266,W503'
+        ]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: ''
+    hooks:
+      - id: mypy
+        args: [
+          --config-file, pyproject.toml,
+          --ignore-missing-imports,
+          --allow-untyped-global,
+          --namespace-packages,
+          --explicit-package-bases,
+          --install-types,
+          --non-interactive
+        ]
+        stages: [manual]
+  - repo: https://github.com/pycqa/bandit
+    rev: ''
+    hooks:
+      - id: bandit
+        args: [
+          --exclude, '*/tests/**', tests/**, '**.md', '**.txt', '**.in',
+          -f, json,
+          -o, bandit_res.json
+        ]
+        stages: [manual]
